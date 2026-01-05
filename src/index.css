@@ -1,0 +1,32 @@
+@import "tailwindcss";
+body {
+  min-height: 100vh;
+  background-color: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+}
+
+input {
+  border: 1px solid #504f4f;
+  width: 80px;
+  height: 100%;
+  font-size: 50px;
+  text-align: center;
+  transition: all .3s ease;
+}
+
+div > input:first-child {
+  border-bottom-left-radius: 10px;
+  border-top-left-radius: 10px;
+}
+
+div > input:last-child {
+  border-bottom-right-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+input:focus {
+  outline: 5px solid #dddcdc;
+}
