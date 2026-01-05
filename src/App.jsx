@@ -5,7 +5,7 @@ import { Toaster, toast } from 'sonner';
 export default function App() {
   const [otp, setOtp] = useState("");
   const [active, setActive] = useState(0);
-  const inputRefs = useRef([0, 1, 2, 3, 4, 5]);
+  const inputRefs = useRef([]);
   const OTP_CODE = "123456";
 
   const handleCompleted = () => {
