@@ -3,7 +3,7 @@ import confetti from 'canvas-confetti';
 import { Toaster, toast } from 'sonner';
 
 export default function App() {
-  const [otp, setOtp] = useState("");
+  const [otp, setOtp] = useState({});
   const [active, setActive] = useState(0);
   const inputRefs = useRef([]);
   const OTP_CODE = "123456";
@@ -20,10 +20,12 @@ export default function App() {
 
   const handleChange = (e) => {
     if(e.target.value.trim()) {
-      setOtp(`${otp}${e.target.value.trim()}`);
+      let inputId = +e.target.dataset.id;
+      setOtp({...otp, [inputId]: e.target.value.trim()});
       setActive(Math.min(active + 1, 5));
     } else {
-      const newOtp = otp.slice(0, otp.length - 1);
+      let id = +e.target.dataset.id;
+      const {[id]:_, ...newOtp} = otp;
       setOtp(newOtp);
       setActive(Math.max(0, active - 1));
     }
@@ -39,10 +41,16 @@ export default function App() {
     setActive(Math.min(text.length, 5));
   }
 
+  const handleClick = (e) => {
+    setActive(+e.target.dataset.id)
+  }
+
   useEffect(() => {
     inputRefs.current[active].focus();
-    if(otp.length < 6) return;
-    if(otp === OTP_CODE) {
+    const otpEntries = Object.entries(otp);
+    if(otpEntries.length < 6) return;
+    const otpString = otpEntries.reduce((acc, item) => acc + item[1], "")
+    if(otpString === OTP_CODE) {
       handleCompleted();
     } else {
       handleError();
@@ -52,15 +60,15 @@ export default function App() {
     <>
       <form className='flex h-37.5'>
         <div className="h-full">
-          <input maxLength={1} inputMode='numeric' type="text" onChange={handleChange} value={otp.slice(0, 1)} ref={el => (inputRefs.current[0] = el)} onPaste={handlePaste}/>
-          <input maxLength={1} inputMode='numeric' type="text" onChange={handleChange} value={otp.slice(1, 2)} ref={el => (inputRefs.current[1] = el)} onPaste={handlePaste}/>
-          <input maxLength={1} inputMode='numeric' type="text" onChange={handleChange} value={otp.slice(2, 3)} ref={el => (inputRefs.current[2] = el)} onPaste={handlePaste}/>
+          <input maxLength={1} inputMode='numeric' type="text" onChange={handleChange} data-id={0} value={otp[0] ?? ""} ref={el => (inputRefs.current[0] = el)} onPaste={handlePaste} onClick={handleClick}/>
+          <input maxLength={1} inputMode='numeric' type="text" onChange={handleChange} data-id={1} value={otp[1] ?? ""} ref={el => (inputRefs.current[1] = el)} onPaste={handlePaste} onClick={handleClick}/>
+          <input maxLength={1} inputMode='numeric' type="text" onChange={handleChange} data-id={2} value={otp[2] ?? ""} ref={el => (inputRefs.current[2] = el)} onPaste={handlePaste} onClick={handleClick}/>
         </div>
         <div className='w-7.5 h-full flex items-center mx-3'><span className="block w-full h-2 rounded-2xl bg-[#504f4f]"></span></div>
         <div className='h-full'>
-          <input maxLength={1} inputMode='numeric' type="text" onChange={handleChange} value={otp.slice(3, 4)} ref={el => (inputRefs.current[3] = el)} onPaste={handlePaste}/>
-          <input maxLength={1} inputMode='numeric' type="text" onChange={handleChange} value={otp.slice(4, 5)} ref={el => (inputRefs.current[4] = el)} onPaste={handlePaste}/>
-          <input maxLength={1} inputMode='numeric' type="text" onChange={handleChange} value={otp.slice(5, 6)} ref={el => (inputRefs.current[5] = el)} onPaste={handlePaste}/>
+          <input maxLength={1} inputMode='numeric' type="text" onChange={handleChange} data-id={3} value={otp[3] ?? ""} ref={el => (inputRefs.current[3] = el)} onPaste={handlePaste} onClick={handleClick}/>
+          <input maxLength={1} inputMode='numeric' type="text" onChange={handleChange} data-id={4} value={otp[4] ?? ""} ref={el => (inputRefs.current[4] = el)} onPaste={handlePaste} onClick={handleClick}/>
+          <input maxLength={1} inputMode='numeric' type="text" onChange={handleChange} data-id={5} value={otp[5] ?? ""} ref={el => (inputRefs.current[5] = el)} onPaste={handlePaste} onClick={handleClick}/>
         </div>
       </form>
       <Toaster position='top-right'/>
