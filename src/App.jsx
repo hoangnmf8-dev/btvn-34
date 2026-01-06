@@ -37,7 +37,12 @@ export default function App() {
     if(text.length > 6) {
       text = text.slice(0, 6);
     }
-    setOtp(text);
+    const newOtp = {};
+    for(let i = 0; i < 6; i++) {
+      newOtp[i] = text.slice(i, i + 1);
+    }
+
+    setOtp(newOtp);
     setActive(Math.min(text.length, 5));
   }
 
@@ -55,6 +60,10 @@ export default function App() {
     } else {
       handleError();
     }
+    setTimeout(() => {
+      setOtp({});
+      setActive(0);
+    }, 700)
   }, [otp])
   return (
     <>
