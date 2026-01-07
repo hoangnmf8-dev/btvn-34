@@ -23,11 +23,6 @@ export default function App() {
       let inputId = +e.target.dataset.id;
       setOtp({...otp, [inputId]: e.target.value.trim()});
       setActive(Math.min(active + 1, 5));
-    } else {
-      let id = +e.target.dataset.id;
-      const {[id]:_, ...newOtp} = otp;
-      setOtp(newOtp);
-      setActive(Math.max(0, active - 1));
     }
   }
 
@@ -50,20 +45,40 @@ export default function App() {
     setActive(+e.target.dataset.id)
   }
 
+  const handleDelete = e => {
+    const inputActiveEl = inputRefs.current.find(input => input === document.activeElement);
+    const idInputActiveEl = +inputActiveEl.dataset.id;
+    if(e.code === "Backspace" && idInputActiveEl > 0 && !inputActiveEl.value.trim()) {
+      const {[idInputActiveEl - 1]:_, ...newOtp} = otp;
+      setOtp(newOtp);
+      setActive(Math.max(0, idInputActiveEl - 1));
+    }
+    if(e.code === "Backspace" && idInputActiveEl >= 0 && inputActiveEl.value.trim()) {
+      const {[idInputActiveEl]:_, ...newOtp} = otp;
+      setOtp(newOtp);
+    }
+  }
+  
   useEffect(() => {
     inputRefs.current[active].focus();
+    document.addEventListener("keydown", handleDelete);
+
     const otpEntries = Object.entries(otp);
-    if(otpEntries.length < 6) return;
-    const otpString = otpEntries.reduce((acc, item) => acc + item[1], "")
-    if(otpString === OTP_CODE) {
-      handleCompleted();
-    } else {
-      handleError();
+    if(otpEntries.length === 6) {
+      const otpString = otpEntries.reduce((acc, item) => acc + item[1], "")
+      if(otpString === OTP_CODE) {
+        handleCompleted();
+      } else {
+        handleError();
+      }
+      setTimeout(() => {
+        setOtp({});
+        setActive(0);
+      }, 700)
     }
-    setTimeout(() => {
-      setOtp({});
-      setActive(0);
-    }, 700)
+    return () => {
+      document.removeEventListener("keydown", handleDelete);
+    }
   }, [otp])
   return (
     <>
